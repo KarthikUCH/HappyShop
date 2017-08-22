@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+apply plugin: "me.tatarka.retrolambda"
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "com.shop.happy.happyshop"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support.constraint:constraint-layout:1.0.0-beta3"
+
+    // Dagger Library
+    compile "com.google.dagger:dagger:$rootProject.DaggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.DaggerVersion"
+
+    // Retrofit & OKHttp Library
+    compile "com.squareup.retrofit2:retrofit:$rootProject.RetrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.RetrofitVersion"
+    compile "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:$rootProject.okhttpVersion"
+
+    // rx java & android
+    compile "io.reactivex:rxjava:$rootProject.rxJavaVersion"
+    compile "io.reactivex:rxandroid:$rootProject.rxAndroidVersion"
+
+    // Butter Knife
+    compile "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
+
+    testCompile "junit:junit:$rootProject.junitVersion"
+}
