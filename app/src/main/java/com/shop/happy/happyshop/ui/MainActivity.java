@@ -1,4 +1,4 @@
-package com.shop.happy.happyshop;
+package com.shop.happy.happyshop.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity
+import com.shop.happy.happyshop.R;
+import com.shop.happy.happyshop.application.ApplicationComponent;
+
+public class MainActivity extends InjectableActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
@@ -40,6 +43,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    void injectComponent(ApplicationComponent component) {
+        component.inject(this);
     }
 
     @Override
