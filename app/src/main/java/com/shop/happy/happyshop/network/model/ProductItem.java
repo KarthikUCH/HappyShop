@@ -17,6 +17,9 @@ public class ProductItem {
     @SerializedName("category")
     private String category;
 
+    @SerializedName("description")
+    private String description;
+
     @SerializedName("img_url")
     private String imgURL;
 
@@ -57,5 +60,9 @@ public class ProductItem {
 
     public boolean isUnderSale() {
         return isUnderSale;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public interface RestServiceFactory {
 
-    String BASE_URL = "http://sephora-mobile-takehome-apple.herokuapp.com/api/v1";
+    String BASE_URL = "http://sephora-mobile-takehome-apple.herokuapp.com/api/v1/";
 
     <T> T create(Class<T> clazz) throws Exception;
 

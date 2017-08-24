@@ -12,10 +12,10 @@ import retrofit2.http.Path;
  */
 
 public interface HappyShopService {
-    @GET("/products.json")
+    @GET("products.json")
     Call<ProductListResponse> getProductList();
 
-    @GET("/products/{id}.json")
+    @GET("products/{id}.json")
     Call<ProductDetailResponse> getProductDetail(@Path("id") String id);
 
 }

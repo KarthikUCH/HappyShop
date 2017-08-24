@@ -12,4 +12,8 @@ public class ProductListResponse {
 
     @SerializedName("products")
     private List<ProductItem> productList;
+
+    public List<ProductItem> getProductList() {
+        return productList;
+    }
 }
