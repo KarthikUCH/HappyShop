@@ -39,4 +39,5 @@ ext {
     rxJavaVersion = "1.1.7"
     rxAndroidVersion = "1.2.1"
     junitVersion = "4.12"
+    glideVersion = "4.0.0"
 }

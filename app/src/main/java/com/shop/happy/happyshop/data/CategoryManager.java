@@ -36,7 +36,7 @@ public class CategoryManager {
     private Observer mObserver;
 
     public interface Observer {
-        void onProductsLoaded(ArrayList<String> categoryLst);
+        void onCategoriesLoaded(ArrayList<String> categoryLst);
     }
 
     public CategoryManager(Context context, SQLiteDatabase dbHelper, RestServiceFactory restServiceFactory) {
@@ -59,25 +59,27 @@ public class CategoryManager {
     //                                     DATABASE CALL                                          //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void displayCategories(boolean refreshProduct) {
+    private void displayCategories(boolean refreshProduct) {
         Observable.defer(() -> Observable.just(getCategories()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(categories -> {
+                    Log.i(TAG, "OnNext");
                     if (mObserver != null) {
-                        mObserver.onProductsLoaded(categories);
+                        mObserver.onCategoriesLoaded(categories);
                     }
                 }, throwable -> {
-
+                    Log.e(TAG, "onError", throwable);
                 }, () -> {
+                    Log.i(TAG, "onCompleted");
                     if (refreshProduct) {
-                        getProducts();
+                        fetchProducts();
                     }
                 });
     }
 
     @WorkerThread
-    public ArrayList<String> getCategories() {
+    private ArrayList<String> getCategories() {
         ArrayList<String> categoryLst = new ArrayList<>();
         String[] columns = new String[]{ProductsTable.COLUMN_PRODUCT_CATEGORY};
 
@@ -118,7 +120,7 @@ public class CategoryManager {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public void getProducts() {
+    private void fetchProducts() {
 
         Observable.defer(() -> Observable.just(retrieveProducts()))
                 .subscribeOn(Schedulers.io())

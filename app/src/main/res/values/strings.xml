@@ -8,4 +8,14 @@
 
     <!-- PRODUCTS -->
     <string name="text_title_category">Categories</string>
+    <string name="text_product_name">Name</string>
+    <string name="text_product_price">Price</string>
+    <string name="text_product_on_sale">ON SALE</string>
+    <string name="text_product_description">Description</string>
+
+    <!-- BUTTON -->
+    <string name="text_btn_add_to_cart">Add To Cart</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

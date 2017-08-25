@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private ArrayList<String> mCategoryList;
-    private final CategoryClickListener mCategoryClickListner;
+    private final CategoryClickListener mCategoryClickListener;
 
     public interface CategoryClickListener {
         void onCategoryClick(String category);
@@ -28,7 +28,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public CategoryAdapter(ArrayList<String> mCategoryList, CategoryClickListener categoryClickListner) {
         this.mCategoryList = mCategoryList;
-        this.mCategoryClickListner = categoryClickListner;
+        this.mCategoryClickListener = categoryClickListner;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
         String category = mCategoryList.get(position);
         holder.tvCategory.setText(category);
-        holder.itemView.setOnClickListener(v -> mCategoryClickListner.onCategoryClick(category));
+        holder.itemView.setOnClickListener(v -> mCategoryClickListener.onCategoryClick(category));
     }
 
     @Override

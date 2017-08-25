@@ -18,7 +18,6 @@ import com.shop.happy.happyshop.data.CategoryManager;
 import com.shop.happy.happyshop.ui.adapter.CategoryAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +34,7 @@ public class MainActivity extends InjectableActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    @BindView(R.id.category_recycler_view)
+    @BindView(R.id.recycler_view_category)
     RecyclerView mRecyclerView;
 
     private CategoryAdapter mAdapter;
@@ -54,7 +53,7 @@ public class MainActivity extends InjectableActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        displayCategory();
+        showCategory();
     }
 
     @Override
@@ -127,18 +126,24 @@ public class MainActivity extends InjectableActivity
         return true;
     }
 
-    @Override
-    public void onProductsLoaded(ArrayList<String> categoryLst) {
-        mAdapter.swapDate(categoryLst);
-    }
-
-    private void displayCategory() {
-        mAdapter = new CategoryAdapter(new ArrayList<>(), itemClickListner);
+    private void showCategory() {
+        mAdapter = new CategoryAdapter(new ArrayList<>(), itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private final CategoryAdapter.CategoryClickListener itemClickListner = category -> {
-        Log.d("clicked", category);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     LISTENERS                                              //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onCategoriesLoaded(ArrayList<String> categoryLst) {
+        mAdapter.swapDate(categoryLst);
+    }
+
+    private final CategoryAdapter.CategoryClickListener itemClickListener = category -> {
+        Log.d("clicked category", category);
+        startProductListActivity(false, category);
     };
 }
