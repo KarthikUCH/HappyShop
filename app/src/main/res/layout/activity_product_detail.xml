@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/activity_vertical_margin">
 
-            <ImageView
+            <com.shop.happy.happyshop.ui.widget.SquareImageView
                 android:id="@+id/img_preview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

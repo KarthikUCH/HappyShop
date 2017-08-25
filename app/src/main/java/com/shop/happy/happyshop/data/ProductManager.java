@@ -14,7 +14,6 @@ import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.RestServiceFactory;
 import com.shop.happy.happyshop.network.model.ProductDetailResponse;
 import com.shop.happy.happyshop.network.model.ProductItem;
-import com.shop.happy.happyshop.network.model.ProductListResponse;
 
 import java.util.ArrayList;
 

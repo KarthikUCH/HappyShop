@@ -1,5 +1,6 @@
 package com.shop.happy.happyshop.ui;
 
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,6 +69,12 @@ public class MainActivity extends InjectableActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         mCategoryManager.detach();
@@ -86,6 +93,7 @@ public class MainActivity extends InjectableActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        refreshBadgeCount(menu);
         return true;
     }
 
@@ -94,7 +102,7 @@ public class MainActivity extends InjectableActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_cart) {
             return true;
         }
 
@@ -130,6 +138,12 @@ public class MainActivity extends InjectableActivity
         mAdapter = new CategoryAdapter(new ArrayList<>(), itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void refreshBadgeCount(Menu menu) {
+        MenuItem itemCart = menu.findItem(R.id.action_cart);
+        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
+        mShoppingCartManager.refreshBadgeCount(this, icon);
     }
 
 

@@ -19,6 +19,7 @@ public class DbConstants {
 
     interface Tables {
         String PRODUCTS = "products";
+        String SHOPPING_CART = "shopping_cart";
     }
 
     interface ProductsTable extends BaseColumns {
@@ -29,6 +30,14 @@ public class DbConstants {
         String COLUMN_PRODUCT_CATEGORY = "category";
         String COLUMN_PRODUCT_DESCRIPTION = "description";
         String COLUMN_PRODUCT_UNDER_SALE = "under_sale";
+    }
+
+    interface ShoppingCartTable extends BaseColumns {
+        String COLUMN_CART_PRODUCT_ID = "id";
+        String COLUMN_CART_PRODUCT_NAME = "name";
+        String COLUMN_CART_PRODUCT_PRICE = "price";
+        String COLUMN_CART_PRODUCT_IMAGE_URL = "img_url";
+        String COLUMN_CART_PRODUCT_QUANTITY = "quantity";
     }
 
     // CREATE TABLE SQL QUERY
@@ -45,9 +54,20 @@ public class DbConstants {
                     + ProductsTable.COLUMN_PRODUCT_UNDER_SALE + INTEGER_TYPE + COMMA_SEP
                     + " UNIQUE (" + ProductsTable.COLUMN_PRODUCT_ID + ") ON CONFLICT REPLACE)";
 
+    public static final String SQL_CREATE_SHOPPING_CART_TABLE =
+            "CREATE TABLE " + Tables.SHOPPING_CART + " ("
+                    + ShoppingCartTable._ID + INTEGER_TYPE + PRIMARY_KEY + AUTO_INCREMENT_TYPE + COMMA_SEP
+                    + ShoppingCartTable.COLUMN_CART_PRODUCT_ID + INTEGER_TYPE + COMMA_SEP
+                    + ShoppingCartTable.COLUMN_CART_PRODUCT_NAME + TEXT_TYPE + COMMA_SEP
+                    + ShoppingCartTable.COLUMN_CART_PRODUCT_PRICE + TEXT_TYPE + COMMA_SEP
+                    + ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY + INTEGER_TYPE + COMMA_SEP
+                    + ShoppingCartTable.COLUMN_CART_PRODUCT_IMAGE_URL + TEXT_TYPE + COMMA_SEP
+                    + " UNIQUE (" + ShoppingCartTable.COLUMN_CART_PRODUCT_ID + ") ON CONFLICT REPLACE)";
+
     // DROP TABLE SQL QUERY
 
     public static final String SQL_DROP_PRODUCTS_TABLE = "DROP TABLE IF EXISTS" + Tables.PRODUCTS;
+    public static final String SQL_DROP_SHOPPING_CART_TABLE = "DROP TABLE IF EXISTS" + Tables.SHOPPING_CART;
 
 
     // INSERT QUERY

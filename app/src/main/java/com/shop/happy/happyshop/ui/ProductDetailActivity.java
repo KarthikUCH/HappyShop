@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.GlideApp;
@@ -17,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProductDetailActivity extends InjectableActivity {
 
@@ -40,6 +40,8 @@ public class ProductDetailActivity extends InjectableActivity {
     @BindView(R.id.tv_description)
     TextView tvDescription;
 
+    private ProductItem mProduct;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +52,10 @@ public class ProductDetailActivity extends InjectableActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ProductItem product = getIntent().getParcelableExtra(ARG_EXTRA_STRING_PRODUCT_ITEM);
-        getSupportActionBar().setTitle(product.getName());
-        showProductDetail(product);
-        getProductDetail(product.getId());
+        mProduct = getIntent().getParcelableExtra(ARG_EXTRA_STRING_PRODUCT_ITEM);
+        getSupportActionBar().setTitle(mProduct.getName());
+        showProductDetail(mProduct);
+        getProductDetail(mProduct.getId());
 
     }
 
@@ -84,25 +86,55 @@ public class ProductDetailActivity extends InjectableActivity {
     }
 
     private void getProductDetail(int productId) {
-        mProductManager.fetchProductDetail(productId, new ProductDescriptionListner(this));
+        mProductManager.fetchProductDetail(productId, new ProductDescriptionListener(this));
+    }
+
+    @OnClick(R.id.btn_add_cart)
+    public void onAddClick() {
+        mShoppingCartManager.addToShoppingCart(mProduct, 1, new AddToCartListener(this));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                     LISTENERS                                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static class ProductDescriptionListner implements ResponseListener<ProductItem> {
+    public static class ProductDescriptionListener implements ResponseListener<ProductItem> {
 
         private final WeakReference<ProductDetailActivity> mReference;
 
-        public ProductDescriptionListner(ProductDetailActivity activity) {
-            mReference = new WeakReference<ProductDetailActivity>(activity);
+        public ProductDescriptionListener(ProductDetailActivity activity) {
+            mReference = new WeakReference<>(activity);
         }
 
         @Override
         public void onResponse(ProductItem product) {
             if (mReference.get() != null) {
                 mReference.get().showProductDetail(product);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
+    }
+
+    public static class AddToCartListener implements ResponseListener<Boolean> {
+
+        private final WeakReference<ProductDetailActivity> mReference;
+
+        public AddToCartListener(ProductDetailActivity activity) {
+            mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onResponse(Boolean isSuccess) {
+            if (mReference.get() != null) {
             }
         }
 
