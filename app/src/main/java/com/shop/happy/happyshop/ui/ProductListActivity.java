@@ -53,6 +53,7 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
     private void showProductFragment() {
         boolean isDisplayCart = getIntent().getBooleanExtra(ARG_EXTRA_BOOLEAN_DISPLAY_CART, false);
         String category = getIntent().getStringExtra(ARG_EXTRA_STRING_CATEGORY);
+        getSupportActionBar().setTitle(category);
 
         mProductListFragment = ProductListFragment.newInstance(isDisplayCart, category);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

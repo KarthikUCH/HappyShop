@@ -2,14 +2,18 @@ package com.shop.happy.happyshop.ui;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
+import com.shop.happy.happyshop.application.GlideApp;
 import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.model.ProductItem;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,19 +50,10 @@ public class ProductDetailActivity extends InjectableActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        showProductDetail();
-    }
-
-    void showProductDetail() {
-        ProductItem item = getIntent().getParcelableExtra(ARG_EXTRA_STRING_PRODUCT_ITEM);
-
-        tvName.setText(item.getName());
-        tvPrice.setText(item.getPrice());
-        tvUnderSale.setText(item.isUnderSale() ? "ON SALE" : "");
-
-        Glide.with(this)
-                .load(item.getImgURL())
-                .into(imgProduct);
+        ProductItem product = getIntent().getParcelableExtra(ARG_EXTRA_STRING_PRODUCT_ITEM);
+        getSupportActionBar().setTitle(product.getName());
+        showProductDetail(product);
+        getProductDetail(product.getId());
 
     }
 
@@ -67,14 +62,48 @@ public class ProductDetailActivity extends InjectableActivity {
         component.inject(this);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showProductDetail(ProductItem product) {
+        tvName.setText(product.getName());
+        tvPrice.setText(product.getPrice());
+        tvUnderSale.setText(product.isUnderSale() ? "ON SALE" : "");
+        tvDescription.setText(product.getDescription());
+
+        GlideApp.with(this)
+                .load(product.getImgURL())
+                .placeholder(imgProduct.getDrawable())
+                .into(imgProduct);
+
+    }
+
+    private void getProductDetail(int productId) {
+        mProductManager.fetchProductDetail(productId, new ProductDescriptionListner(this));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                     LISTENERS                                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static class ProductDescriptionListner implements ResponseListener<ProductItem> {
-        @Override
-        public void onResponse(ProductItem response) {
 
+        private final WeakReference<ProductDetailActivity> mReference;
+
+        public ProductDescriptionListner(ProductDetailActivity activity) {
+            mReference = new WeakReference<ProductDetailActivity>(activity);
+        }
+
+        @Override
+        public void onResponse(ProductItem product) {
+            if (mReference.get() != null) {
+                mReference.get().showProductDetail(product);
+            }
         }
 
         @Override

@@ -96,7 +96,7 @@ public class CategoryManager {
     }
 
 
-    private void parseProducts(ProductListResponse productListResponse) {
+    public void parseProducts(ProductListResponse productListResponse) {
 
         mDbHelper.beginTransaction();
 

@@ -3,16 +3,23 @@ package com.shop.happy.happyshop.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.shop.happy.happyshop.data.DbConstants.ProductsTable;
 import com.shop.happy.happyshop.data.DbConstants.Tables;
+import com.shop.happy.happyshop.network.HappyShopService;
+import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.RestServiceFactory;
+import com.shop.happy.happyshop.network.model.ProductDetailResponse;
 import com.shop.happy.happyshop.network.model.ProductItem;
+import com.shop.happy.happyshop.network.model.ProductListResponse;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -89,7 +96,60 @@ public class ProductManager {
         return items;
     }
 
+    public void parseProductDetail(ProductItem product) {
+
+        mDbHelper.beginTransaction();
+
+        SQLiteStatement insert = mDbHelper.compileStatement(DbConstants.INSERT_PRODUCT_QUERY);
+
+        insert.bindDouble(1, product.getId());
+        insert.bindString(2, product.getName());
+        insert.bindString(3, product.getPrice());
+        insert.bindString(4, product.getImgURL());
+        insert.bindString(5, product.getCategory());
+        insert.bindString(6, product.getDescription());
+        insert.bindDouble(7, product.isUnderSale() ? 1 : 0);
+        insert.execute();
+
+        mDbHelper.setTransactionSuccessful();
+        mDbHelper.endTransaction();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                     NETWORK CALL                                           //
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public void fetchProductDetail(int productId, ResponseListener<ProductItem> product) {
+
+        Observable.defer(() -> Observable.just(retrieveProductDetail(productId)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    Log.i(TAG, "onNext");
+                    product.onResponse(result);
+                }, throwable -> {
+                    Log.e(TAG, "onError", throwable);
+                }, () -> {
+                    Log.i(TAG, "onCompleted");
+                });
+    }
+
+    @WorkerThread
+    private ProductItem retrieveProductDetail(int productId) {
+        try {
+            HappyShopService service = mRestServiceFactory.create(HappyShopService.class);
+            Call<ProductDetailResponse> responseCall = service.getProductDetail(String.valueOf(productId));
+            Response<ProductDetailResponse> response = responseCall.execute();
+            if (response.code() == 200) {
+                ProductItem item = response.body().getProduct();
+                parseProductDetail(item);
+                return item;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
 }

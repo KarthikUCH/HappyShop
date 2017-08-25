@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ProductDetailResponse {
 
-    @SerializedName("products")
+    @SerializedName("product")
     private ProductItem product;
+
+    public ProductItem getProduct() {
+        return product;
+    }
 }

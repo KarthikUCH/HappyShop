@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.HappyShop;
 import com.shop.happy.happyshop.data.CategoryManager;
+import com.shop.happy.happyshop.data.ProductManager;
 import com.shop.happy.happyshop.network.model.ProductItem;
 
 import javax.inject.Inject;
@@ -20,6 +21,9 @@ public abstract class InjectableActivity extends AppCompatActivity {
 
     @Inject
     CategoryManager mCategoryManager;
+
+    @Inject
+    ProductManager mProductManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
