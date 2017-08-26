@@ -73,7 +73,6 @@ public class ShoppingCartManager {
                 });
     }
 
-
     public int getCount() {
         return totalItemInCart;
     }
@@ -94,24 +93,30 @@ public class ShoppingCartManager {
 
     }
 
-    public void addToShoppingCart(ProductItem product, int quantity, ResponseListener<Boolean> listener) {
+    public void updateToShoppingCart(ProductItem product, int quantity, ResponseListener<Integer> listener) {
 
         Observable.defer(() -> Observable.just(getProductQuantityInCart(product.getId())))
                 .map(currentQuantity -> {
                     int total = currentQuantity + quantity;
-                    insertProduct(product, total);
-                    return true;
+                    if (total > 0) {
+                        insertProduct(product, total);
+                    } else {
+                        removeProduct(product.getId());
+                    }
+                    return total;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
-                    totalItemInCart += quantity;
+                    if (result >= 0) {
+                        listener.onResponse(result);
+                        totalItemInCart += quantity;
+                    }
                     Log.i(TAG, "OnNext");
                 }, throwable -> {
                     Log.e(TAG, "onError", throwable);
                 }, () -> {
                     Log.i(TAG, "onCompleted");
-                    listener.onResponse(true);
                 });
 
     }
@@ -139,7 +144,21 @@ public class ShoppingCartManager {
                 });
     }
 
-    public void refreshBadgeCount(Context context, LayerDrawable icon) {
+    public void getProductQuantity(ProductItem product, ResponseListener<Integer> listener) {
+        Observable.defer(() -> Observable.just(getProductQuantityInCart(product.getId())))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    listener.onResponse(result);
+                    Log.i(TAG, "OnNext");
+                }, throwable -> {
+                    Log.e(TAG, "onError", throwable);
+                }, () -> {
+                    Log.i(TAG, "onCompleted");
+                });
+    }
+
+    public void setBadgeCount(Context context, LayerDrawable icon) {
 
         BadgeDrawable badge;
 

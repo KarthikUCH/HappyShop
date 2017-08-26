@@ -19,6 +19,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/toolbar"
         android:scrollbars="vertical">
 
@@ -66,6 +68,48 @@
                 android:textColor="@color/color_red"
                 android:textStyle="bold" />
 
+            <LinearLayout
+                android:id="@+id/lay_cart_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_on_sale"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="invisible">
+
+                <Button
+                    android:id="@+id/btn_delete"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_add_to_cart"
+                    android:text="-"
+                    android:textColor="@color/color_white" />
+
+                <TextView
+                    android:id="@+id/tv_cart_count"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_name"
+                    android:paddingLeft="24dp"
+                    android:paddingRight="24dp"
+                    android:text="@string/text_product_added_to_cart"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_add"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_add_to_cart"
+                    android:text="+"
+                    android:textColor="@color/color_white" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_add_cart"
                 style="@style/TextAppearance.AppCompat.Medium"
@@ -86,7 +130,7 @@
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_add_cart"
+                android:layout_below="@+id/lay_cart_detail"
                 android:text="@string/text_product_description"
                 android:textColor="@color/colorPrimary" />
         </RelativeLayout>

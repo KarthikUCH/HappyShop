@@ -12,7 +12,7 @@ public class DbConstants {
     public static final int DB_VERSION = 1;
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
-    private static final String LONG_TYPE = " INTEGER";
+    private static final String LONG_TYPE = " LONG";
     private static final String AUTO_INCREMENT_TYPE = " AUTOINCREMENT";
     private static final String PRIMARY_KEY = " PRIMARY KEY";
     private static final String COMMA_SEP = ",";

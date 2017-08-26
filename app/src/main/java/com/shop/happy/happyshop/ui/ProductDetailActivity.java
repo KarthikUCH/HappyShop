@@ -3,7 +3,10 @@ package com.shop.happy.happyshop.ui;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.shop.happy.happyshop.R;
@@ -40,6 +43,15 @@ public class ProductDetailActivity extends InjectableActivity {
     @BindView(R.id.tv_description)
     TextView tvDescription;
 
+    @BindView(R.id.btn_add_cart)
+    Button btnAddCart;
+
+    @BindView(R.id.lay_cart_detail)
+    LinearLayout layCartDetail;
+
+    @BindView(R.id.tv_cart_count)
+    TextView tvCartCount;
+
     private ProductItem mProduct;
 
     @Override
@@ -56,6 +68,8 @@ public class ProductDetailActivity extends InjectableActivity {
         getSupportActionBar().setTitle(mProduct.getName());
         showProductDetail(mProduct);
         getProductDetail(mProduct.getId());
+        mShoppingCartManager.getProductQuantity(mProduct, new UpdateToCartListener(this));
+
 
     }
 
@@ -89,9 +103,31 @@ public class ProductDetailActivity extends InjectableActivity {
         mProductManager.fetchProductDetail(productId, new ProductDescriptionListener(this));
     }
 
+    private void showCartDetails(int count) {
+        if (count == 0 && btnAddCart.getVisibility() == View.GONE) {
+            btnAddCart.setVisibility(View.VISIBLE);
+            layCartDetail.setVisibility(View.INVISIBLE);
+        } else if (count > 0) {
+            btnAddCart.setVisibility(View.GONE);
+            layCartDetail.setVisibility(View.VISIBLE);
+            tvCartCount.setText(count + " " + getString(R.string.text_product_added_to_cart));
+        }
+    }
+
+
     @OnClick(R.id.btn_add_cart)
     public void onAddClick() {
-        mShoppingCartManager.addToShoppingCart(mProduct, 1, new AddToCartListener(this));
+        mShoppingCartManager.updateToShoppingCart(mProduct, 1, new UpdateToCartListener(this));
+    }
+
+    @OnClick(R.id.btn_add)
+    public void onAdd() {
+        onAddClick();
+    }
+
+    @OnClick(R.id.btn_delete)
+    public void onDelete() {
+        mShoppingCartManager.updateToShoppingCart(mProduct, -1, new UpdateToCartListener(this));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,17 +160,18 @@ public class ProductDetailActivity extends InjectableActivity {
         }
     }
 
-    public static class AddToCartListener implements ResponseListener<Boolean> {
+    public static class UpdateToCartListener implements ResponseListener<Integer> {
 
         private final WeakReference<ProductDetailActivity> mReference;
 
-        public AddToCartListener(ProductDetailActivity activity) {
+        public UpdateToCartListener(ProductDetailActivity activity) {
             mReference = new WeakReference<>(activity);
         }
 
         @Override
-        public void onResponse(Boolean isSuccess) {
+        public void onResponse(Integer itemCount) {
             if (mReference.get() != null) {
+                mReference.get().showCartDetails(itemCount);
             }
         }
 

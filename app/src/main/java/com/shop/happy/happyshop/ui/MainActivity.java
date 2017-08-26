@@ -137,7 +137,7 @@ public class MainActivity extends InjectableActivity
     private void refreshBadgeCount(Menu menu) {
         MenuItem itemCart = menu.findItem(R.id.action_cart);
         LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        mShoppingCartManager.refreshBadgeCount(this, icon);
+        mShoppingCartManager.setBadgeCount(this, icon);
     }
 
 

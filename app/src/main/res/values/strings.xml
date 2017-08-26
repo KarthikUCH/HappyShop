@@ -17,7 +17,7 @@
     <string name="text_product_quantity">Qty:</string>
     <string name="text_product_on_sale">ON SALE</string>
     <string name="text_product_description">Description</string>
-    <string name="text_alert_added_to_cart">Successfully Added to Cart</string>
+    <string name="text_product_added_to_cart">Item added to Cart</string>
 
     <!-- BUTTON -->
     <string name="text_btn_add_to_cart">Add To Cart</string>
