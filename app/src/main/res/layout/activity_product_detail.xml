@@ -66,7 +66,6 @@
                 android:textColor="@color/color_red"
                 android:textStyle="bold" />
 
-
             <Button
                 android:id="@+id/btn_add_cart"
                 style="@style/TextAppearance.AppCompat.Medium"

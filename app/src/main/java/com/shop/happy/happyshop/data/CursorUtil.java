@@ -22,7 +22,7 @@ public class CursorUtil {
         item.setCategory(cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_CATEGORY)));
         item.setDescription(cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_DESCRIPTION)));
         item.setImgURL(cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_IMAGE_URL)));
-        item.setUnderSale(cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_NAME)) > 0);
+        item.setUnderSale(cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_UNDER_SALE)) > 0);
 
         return item;
     }
@@ -36,7 +36,7 @@ public class CursorUtil {
         item.setQuantity(cursor.getInt(cursor.getColumnIndex(ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY)));
         item.setCategory(cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_CATEGORY)));
         item.setDescription(cursor.getString(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_DESCRIPTION)));
-        item.setUnderSale(cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_NAME)) > 0);
+        item.setUnderSale(cursor.getInt(cursor.getColumnIndex(ProductsTable.COLUMN_PRODUCT_UNDER_SALE)) > 0);
 
         return item;
     }
