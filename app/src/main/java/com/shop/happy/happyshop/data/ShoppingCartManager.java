@@ -99,7 +99,7 @@ public class ShoppingCartManager {
         Observable.defer(() -> Observable.just(getProductQuantityInCart(product.getId())))
                 .map(currentQuantity -> {
                     int total = currentQuantity + quantity;
-                    insertProductToCart(product, total);
+                    insertProduct(product, total);
                     return true;
                 })
                 .subscribeOn(Schedulers.io())
@@ -114,6 +114,29 @@ public class ShoppingCartManager {
                     listener.onResponse(true);
                 });
 
+    }
+
+    public void removeProductFromCart(CartProductItem product, ResponseListener<CartProductItem> listener) {
+        Observable.defer(() -> Observable.just(removeProduct(product.getId())))
+                .map(integer -> {
+                    if (integer > 0) {
+                        totalItemInCart = getTotalItemsInCart();
+                    }
+                    return integer > 0 ? true : false;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    if (result) {
+                        listener.onResponse(product);
+                    }
+                    Log.i(TAG, "OnNext");
+                }, throwable -> {
+                    Log.e(TAG, "onError", throwable);
+                }, () -> {
+                    Log.i(TAG, "onCompleted");
+
+                });
     }
 
     public void refreshBadgeCount(Context context, LayerDrawable icon) {
@@ -141,9 +164,11 @@ public class ShoppingCartManager {
     @WorkerThread
     private int getProductQuantityInCart(int productId) {
         int quantity = 0;
+        String selection = ShoppingCartTable.COLUMN_CART_PRODUCT_ID + " =?";
+        String[] selectionArgs = new String[]{String.valueOf(productId)};
 
         Cursor cursor = mDbHelper.query(Tables.SHOPPING_CART, new String[]{ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY},
-                null, null, null, null, null);
+                selection, selectionArgs, null, null, null);
 
         if (cursor.moveToFirst()) {
             quantity = cursor.getInt(0);
@@ -155,7 +180,7 @@ public class ShoppingCartManager {
     }
 
     @WorkerThread
-    private long insertProductToCart(ProductItem product, int quantity) {
+    private long insertProduct(ProductItem product, int quantity) {
         ContentValues values = new ContentValues();
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_ID, product.getId());
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_NAME, product.getName());
@@ -164,6 +189,13 @@ public class ShoppingCartManager {
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY, quantity);
 
         return mDbHelper.insert(Tables.SHOPPING_CART, null, values);
+    }
+
+    private int removeProduct(int productId) {
+        String where = ShoppingCartTable.COLUMN_CART_PRODUCT_ID + " =? ";
+        String[] whereArgs = new String[]{String.valueOf(productId)};
+
+        return mDbHelper.delete(Tables.SHOPPING_CART, where, whereArgs);
     }
 
     @WorkerThread

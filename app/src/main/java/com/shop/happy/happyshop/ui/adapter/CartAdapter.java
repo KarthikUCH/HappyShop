@@ -28,7 +28,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartProductVie
     private final CartProductClickListener mCartProductClickListner;
 
     public interface CartProductClickListener {
-        void onRemove(int position, int productId);
+        void onRemove(CartProductItem product);
     }
 
     public CartAdapter(Context mContext, ArrayList<CartProductItem> products, CartProductClickListener mCartProductClickListner) {
@@ -53,6 +53,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartProductVie
         holder.tvPrice.setText(item.getPrice());
         holder.tvQuantity.setText(mContext.getString(R.string.text_product_quantity) + "  " + String.valueOf(item.getQuantity()));
 
+        holder.imgRemove.setOnClickListener(v -> mCartProductClickListner.onRemove(item));
+
         Glide.with(mContext)
                 .load(item.getImgURL())
                 .into(holder.imgProduct);
@@ -68,10 +70,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartProductVie
         notifyDataSetChanged();
     }
 
+    public void removeProduct(CartProductItem product) {
+        int position = -1;
+        for (int i = 0; i < mProducts.size(); i++) {
+            if (mProducts.get(i).getId() == product.getId()) {
+                position = i;
+                break;
+            }
+        }
+        mProducts.remove(position);
+        notifyItemRemoved(position);
+    }
+
     class CartProductViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.img_preview)
         ImageView imgProduct;
+
+        @BindView(R.id.img_remove)
+        ImageView imgRemove;
 
         @BindView(R.id.tv_name)
         TextView tvName;

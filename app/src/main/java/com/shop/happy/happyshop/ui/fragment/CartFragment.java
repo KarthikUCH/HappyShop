@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.data.ShoppingCartManager;
+import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.model.CartProductItem;
 import com.shop.happy.happyshop.ui.adapter.CartAdapter;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -24,7 +26,7 @@ import butterknife.ButterKnife;
  * Created by karthikeyan on 25/8/17.
  */
 
-public class CartFragment extends BaseFragment implements ShoppingCartManager.Observer {
+public class CartFragment extends BaseFragment implements ShoppingCartManager.Observer, CartAdapter.CartProductClickListener {
 
     @BindView(R.id.recycler_view_product)
     RecyclerView mRecyclerView;
@@ -83,7 +85,7 @@ public class CartFragment extends BaseFragment implements ShoppingCartManager.Ob
 
     private void showProducts() {
         mShoppingCartManager.attach(this);
-        mAdapter = new CartAdapter(getContext(), new ArrayList<>(), cartProductClickListener);
+        mAdapter = new CartAdapter(getContext(), new ArrayList<>(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -93,15 +95,40 @@ public class CartFragment extends BaseFragment implements ShoppingCartManager.Ob
     //                                     LISTENERS                                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static CartAdapter.CartProductClickListener cartProductClickListener = new CartAdapter.CartProductClickListener() {
-        @Override
-        public void onRemove(int position, int productId) {
+    @Override
+    public void onRemove(CartProductItem product) {
+        mShoppingCartManager.removeProductFromCart(product, new RemoveFromCartListener(this));
+    }
 
-        }
-    };
 
     @Override
     public void onProductsLoaded(ArrayList<CartProductItem> productList) {
         mAdapter.swapData(productList);
+    }
+
+    public static class RemoveFromCartListener implements ResponseListener<CartProductItem> {
+
+        private final WeakReference<CartFragment> mReference;
+
+        public RemoveFromCartListener(CartFragment fragment) {
+            mReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void onResponse(CartProductItem product) {
+            if (mReference.get() != null) {
+                mReference.get().mAdapter.removeProduct(product);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
     }
 }
