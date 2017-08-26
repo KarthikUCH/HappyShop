@@ -36,8 +36,6 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
     @BindView(R.id.recycler_view_product)
     RecyclerView mRecyclerView;
 
-
-    private boolean isDisplayCart;
     private String mCategory;
 
     private ProductListAdapter mAdapter;
@@ -54,10 +52,9 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
      * @param category .
      * @return A new instance of fragment ProductListFragment.
      */
-    public static ProductListFragment newInstance(boolean isDisplayCart, String category) {
+    public static ProductListFragment newInstance(String category) {
         ProductListFragment fragment = new ProductListFragment();
         Bundle args = new Bundle();
-        args.putBoolean(ProductListActivity.ARG_EXTRA_BOOLEAN_DISPLAY_CART, isDisplayCart);
         args.putString(ProductListActivity.ARG_EXTRA_STRING_CATEGORY, category);
         fragment.setArguments(args);
         return fragment;
@@ -105,8 +102,8 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
     @Override
     public void onDetach() {
         super.onDetach();
+        mProductManager.detach();
         mListener = null;
-
     }
 
     private void showProducts() {

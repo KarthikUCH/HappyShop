@@ -103,6 +103,7 @@ public class MainActivity extends InjectableActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_cart) {
+            startProductListActivity(true, "");
             return true;
         }
 

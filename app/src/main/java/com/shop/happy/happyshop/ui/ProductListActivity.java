@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.network.model.ProductItem;
+import com.shop.happy.happyshop.ui.fragment.CartFragment;
 import com.shop.happy.happyshop.ui.fragment.ProductListFragment;
 
 import butterknife.BindView;
@@ -23,6 +24,7 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
     Toolbar toolbar;
 
     private ProductListFragment mProductListFragment;
+    private CartFragment mCartFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,13 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        showProductFragment();
+        boolean isDisplayCart = getIntent().getBooleanExtra(ARG_EXTRA_BOOLEAN_DISPLAY_CART, false);
+        if (isDisplayCart) {
+            showCartFragment();
+        } else {
+            showProductFragment();
+        }
+
     }
 
     @Override
@@ -51,13 +59,22 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
     }
 
     private void showProductFragment() {
-        boolean isDisplayCart = getIntent().getBooleanExtra(ARG_EXTRA_BOOLEAN_DISPLAY_CART, false);
         String category = getIntent().getStringExtra(ARG_EXTRA_STRING_CATEGORY);
         getSupportActionBar().setTitle(category);
 
-        mProductListFragment = ProductListFragment.newInstance(isDisplayCart, category);
+        mProductListFragment = ProductListFragment.newInstance(category);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mProductListFragment, ProductListFragment.class.getName());
+        transaction.commit();
+
+    }
+
+    private void showCartFragment() {
+        getSupportActionBar().setTitle("Shopping Cart");
+
+        mCartFragment = CartFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mCartFragment, CartFragment.class.getName());
         transaction.commit();
 
     }

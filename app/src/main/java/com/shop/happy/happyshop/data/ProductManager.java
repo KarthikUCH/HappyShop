@@ -55,10 +55,6 @@ public class ProductManager {
         mObserver = null;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     DATABASE CALL                                          //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private void displayProducts(String category) {
         Observable.defer(() -> Observable.just(getProducts(category)))
                 .subscribeOn(Schedulers.io())
@@ -74,6 +70,10 @@ public class ProductManager {
                     Log.i(TAG, "onCompleted");
                 });
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     DATABASE CALL                                          //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     @WorkerThread
@@ -95,6 +95,7 @@ public class ProductManager {
         return items;
     }
 
+    @WorkerThread
     public void parseProductDetail(ProductItem product) {
 
         mDbHelper.beginTransaction();

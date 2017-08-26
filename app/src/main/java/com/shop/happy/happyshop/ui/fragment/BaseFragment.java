@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.HappyShop;
 import com.shop.happy.happyshop.data.ProductManager;
+import com.shop.happy.happyshop.data.ShoppingCartManager;
 
 import javax.inject.Inject;
 
@@ -17,6 +18,9 @@ public abstract class BaseFragment extends Fragment {
 
     @Inject
     ProductManager mProductManager;
+
+    @Inject
+    ShoppingCartManager mShoppingCartManager;
 
     @Override
     public void onAttach(Context context) {

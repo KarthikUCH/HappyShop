@@ -6,4 +6,9 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="badge_text_size">12sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Item margin -->
+    <dimen name="item_image_list_thumbnail">96dp</dimen>
+    <dimen name="item_cart_product_padding">6dp</dimen>
+    <dimen name="item_product_padding">4dp</dimen>
 </resources>

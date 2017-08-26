@@ -11,11 +11,15 @@ import android.util.Log;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.data.DbConstants.ShoppingCartTable;
+import com.shop.happy.happyshop.data.DbConstants.ProductsTable;
 import com.shop.happy.happyshop.data.DbConstants.Tables;
 
 import com.shop.happy.happyshop.network.ResponseListener;
+import com.shop.happy.happyshop.network.model.CartProductItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
 import com.shop.happy.happyshop.ui.widget.BadgeDrawable;
+
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,12 +36,43 @@ public class ShoppingCartManager {
     private final Context mContext;
     private final SQLiteDatabase mDbHelper;
     private int totalItemInCart;
+    private Observer mObserver;
+
+    public interface Observer {
+        void onProductsLoaded(ArrayList<CartProductItem> productList);
+    }
 
     public ShoppingCartManager(Context mContext, SQLiteDatabase dbHelper) {
         this.mContext = mContext;
         this.mDbHelper = dbHelper;
         calculateTotalItemsInCart();
     }
+
+    public void attach(Observer observer) {
+        this.mObserver = observer;
+        displayCartProducts();
+    }
+
+    public void detach() {
+        this.mObserver = null;
+    }
+
+    private void displayCartProducts() {
+        Observable.defer(() -> Observable.just(getProductsFromCart()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(products -> {
+                    Log.i(TAG, "OnNext");
+                    if (mObserver != null) {
+                        mObserver.onProductsLoaded(products);
+                    }
+                }, throwable -> {
+                    Log.e(TAG, "onError", throwable);
+                }, () -> {
+                    Log.i(TAG, "onCompleted");
+                });
+    }
+
 
     public int getCount() {
         return totalItemInCart;
@@ -86,6 +121,7 @@ public class ShoppingCartManager {
         BadgeDrawable badge;
 
         // Reuse drawable if possible
+
         Drawable reuse = icon.findDrawableByLayerId(R.id.ic_badge);
         if (reuse != null && reuse instanceof BadgeDrawable) {
             badge = (BadgeDrawable) reuse;
@@ -142,5 +178,26 @@ public class ShoppingCartManager {
             cursor.close();
         }
         return quantity;
+    }
+
+    @WorkerThread
+    private ArrayList<CartProductItem> getProductsFromCart() {
+        ArrayList<CartProductItem> items = new ArrayList<>();
+        String query = "SELECT A." + ShoppingCartTable.COLUMN_CART_PRODUCT_ID + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_NAME
+                + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_PRICE + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_IMAGE_URL
+                + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY + ",B." + ProductsTable.COLUMN_PRODUCT_DESCRIPTION
+                + ",B." + ProductsTable.COLUMN_PRODUCT_CATEGORY + ",B." + ProductsTable.COLUMN_PRODUCT_UNDER_SALE
+                + " FROM " + Tables.SHOPPING_CART + " A LEFT JOIN " + Tables.PRODUCTS + " B ON A.id = B.id "
+                + " ORDER BY A." + ShoppingCartTable.COLUMN_CART_PRODUCT_NAME + " ASC";
+
+        Cursor cursor = mDbHelper.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            items.add(CursorUtil.getProductFromCart(cursor));
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return items;
     }
 }
