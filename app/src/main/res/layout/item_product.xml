@@ -10,7 +10,8 @@
     <com.shop.happy.happyshop.ui.widget.SquareImageView
         android:id="@+id/img_preview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_thumbnail_img_24dp"/>
 
     <TextView
         android:id="@+id/tv_name"

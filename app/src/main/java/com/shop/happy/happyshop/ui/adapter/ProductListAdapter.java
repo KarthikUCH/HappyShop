@@ -1,6 +1,7 @@
 package com.shop.happy.happyshop.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.shop.happy.happyshop.R;
+import com.shop.happy.happyshop.application.GlideApp;
 import com.shop.happy.happyshop.network.model.ProductItem;
 import com.shop.happy.happyshop.ui.fragment.ProductListFragment.ProductClickListener;
 
@@ -49,8 +51,9 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         holder.tvPrice.setText(item.getPrice());
         holder.tvUnderSale.setText(item.isUnderSale() ? "ON SALE" : "");
 
-        Glide.with(mContext)
+        GlideApp.with(mContext)
                 .load(item.getImgURL())
+                .placeholder(ContextCompat.getDrawable(mContext, R.drawable.ic_thumbnail_img_24dp))
                 .into(holder.imgProduct);
 
         holder.itemView.setOnClickListener(v -> mProductClickListener.onProductClick(item));

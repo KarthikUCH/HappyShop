@@ -10,7 +10,8 @@
     <ImageView
         android:id="@+id/img_preview"
         android:layout_width="@dimen/item_image_list_thumbnail"
-        android:layout_height="@dimen/item_image_list_thumbnail" />
+        android:layout_height="@dimen/item_image_list_thumbnail"
+        android:src="@drawable/ic_thumbnail_img_24dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"

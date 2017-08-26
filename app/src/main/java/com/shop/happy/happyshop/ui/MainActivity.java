@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
@@ -37,6 +39,9 @@ public class MainActivity extends InjectableActivity
 
     @BindView(R.id.recycler_view_category)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private CategoryAdapter mAdapter;
 
@@ -147,6 +152,11 @@ public class MainActivity extends InjectableActivity
 
     @Override
     public void onCategoriesLoaded(ArrayList<String> categoryLst) {
+        if (categoryLst.size() == 0) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
         mAdapter.swapDate(categoryLst);
     }
 
