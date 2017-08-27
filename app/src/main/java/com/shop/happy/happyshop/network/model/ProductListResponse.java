@@ -2,6 +2,7 @@ package com.shop.happy.happyshop.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +12,9 @@ import java.util.List;
 public class ProductListResponse {
 
     @SerializedName("products")
-    private List<ProductItem> productList;
+    private ArrayList<ProductItem> productList;
 
-    public List<ProductItem> getProductList() {
+    public ArrayList<ProductItem> getProductList() {
         return productList;
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.GlideApp;
+import com.shop.happy.happyshop.data.ProductManager;
 import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.model.ProductItem;
 
@@ -21,9 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ProductDetailActivity extends InjectableActivity {
+public class ProductDetailActivity extends InjectableActivity implements ProductManager.Observer{
 
-    public static final String ARG_EXTRA_STRING_PRODUCT_ITEM = "arg_extra_product_item";
+    public static final String ARG_EXTRA_PARCELABLE_PRODUCT_ITEM = "arg_extra_product_item";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -64,18 +65,27 @@ public class ProductDetailActivity extends InjectableActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mProduct = getIntent().getParcelableExtra(ARG_EXTRA_STRING_PRODUCT_ITEM);
+        mProduct = getIntent().getParcelableExtra(ARG_EXTRA_PARCELABLE_PRODUCT_ITEM);
         getSupportActionBar().setTitle(mProduct.getName());
         showProductDetail(mProduct);
-        getProductDetail(mProduct.getId());
         mShoppingCartManager.getProductQuantity(mProduct, new UpdateToCartListener(this));
-
-
     }
 
     @Override
     void injectComponent(ApplicationComponent component) {
         component.inject(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mProductManager.attach(mProduct.getId(), this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mProductManager.detach();
     }
 
     @Override
@@ -99,9 +109,6 @@ public class ProductDetailActivity extends InjectableActivity {
 
     }
 
-    private void getProductDetail(int productId) {
-        mProductManager.fetchProductDetail(productId, new ProductDescriptionListener(this));
-    }
 
     private void showCartDetails(int count) {
         if (count == 0 && btnAddCart.getVisibility() == View.GONE) {
@@ -134,30 +141,15 @@ public class ProductDetailActivity extends InjectableActivity {
     //                                     LISTENERS                                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static class ProductDescriptionListener implements ResponseListener<ProductItem> {
 
-        private final WeakReference<ProductDetailActivity> mReference;
+    @Override
+    public void onProductLoaded(ProductItem product) {
+        showProductDetail(product);
+    }
 
-        public ProductDescriptionListener(ProductDetailActivity activity) {
-            mReference = new WeakReference<>(activity);
-        }
+    @Override
+    public void onError(String errorMsg) {
 
-        @Override
-        public void onResponse(ProductItem product) {
-            if (mReference.get() != null) {
-                mReference.get().showProductDetail(product);
-            }
-        }
-
-        @Override
-        public void onError(String errorMessage) {
-
-        }
-
-        @Override
-        public void onCompleted() {
-
-        }
     }
 
     public static class UpdateToCartListener implements ResponseListener<Integer> {

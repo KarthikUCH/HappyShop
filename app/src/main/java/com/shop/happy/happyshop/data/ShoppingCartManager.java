@@ -11,9 +11,7 @@ import android.util.Log;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.data.DbConstants.ShoppingCartTable;
-import com.shop.happy.happyshop.data.DbConstants.ProductsTable;
 import com.shop.happy.happyshop.data.DbConstants.Tables;
-
 import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.model.CartProductItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
@@ -247,6 +245,8 @@ public class ShoppingCartManager {
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_NAME, product.getName());
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_PRICE, product.getPrice());
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_IMAGE_URL, product.getImgURL());
+        values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_CATEGORY, product.getCategory());
+        values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_DESCRIPTION, product.getDescription());
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY, quantity);
 
         return mDbHelper.insert(Tables.SHOPPING_CART, null, values);
@@ -289,14 +289,9 @@ public class ShoppingCartManager {
     @WorkerThread
     private ArrayList<CartProductItem> getProductsFromCart() {
         ArrayList<CartProductItem> items = new ArrayList<>();
-        String query = "SELECT A." + ShoppingCartTable.COLUMN_CART_PRODUCT_ID + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_NAME
-                + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_PRICE + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_IMAGE_URL
-                + ",A." + ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY + ",B." + ProductsTable.COLUMN_PRODUCT_DESCRIPTION
-                + ",B." + ProductsTable.COLUMN_PRODUCT_CATEGORY + ",B." + ProductsTable.COLUMN_PRODUCT_UNDER_SALE
-                + " FROM " + Tables.SHOPPING_CART + " A LEFT JOIN " + Tables.PRODUCTS + " B ON A.id = B.id "
-                + " ORDER BY A." + ShoppingCartTable.COLUMN_CART_PRODUCT_NAME + " ASC";
 
-        Cursor cursor = mDbHelper.rawQuery(query, null);
+        Cursor cursor = mDbHelper.query(Tables.SHOPPING_CART, null, null , null, null, null,
+                ShoppingCartTable.COLUMN_CART_PRODUCT_NAME+" ASC");
 
         while (cursor.moveToNext()) {
             items.add(CursorUtil.getProductFromCart(cursor));

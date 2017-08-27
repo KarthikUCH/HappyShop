@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shop.happy.happyshop.R;
+import com.shop.happy.happyshop.network.model.CategoryItem;
 
 import java.util.ArrayList;
 
@@ -19,16 +20,16 @@ import butterknife.ButterKnife;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    private ArrayList<String> mCategoryList;
+    private ArrayList<CategoryItem> mCategoryList;
     private final CategoryClickListener mCategoryClickListener;
 
     public interface CategoryClickListener {
-        void onCategoryClick(String category);
+        void onCategoryClick(CategoryItem category);
     }
 
-    public CategoryAdapter(ArrayList<String> mCategoryList, CategoryClickListener categoryClickListner) {
+    public CategoryAdapter(ArrayList<CategoryItem> mCategoryList, CategoryClickListener categoryClickListener) {
         this.mCategoryList = mCategoryList;
-        this.mCategoryClickListener = categoryClickListner;
+        this.mCategoryClickListener = categoryClickListener;
     }
 
     @Override
@@ -40,8 +41,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(CategoryViewHolder holder, int position) {
-        String category = mCategoryList.get(position);
-        holder.tvCategory.setText(category);
+        CategoryItem category = mCategoryList.get(position);
+        holder.tvCategory.setText(category.getName());
         holder.itemView.setOnClickListener(v -> mCategoryClickListener.onCategoryClick(category));
     }
 
@@ -50,7 +51,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         return mCategoryList.size();
     }
 
-    public void swapDate(ArrayList<String> categoryList) {
+    public void swapDate(ArrayList<CategoryItem> categoryList) {
         this.mCategoryList = categoryList;
         notifyDataSetChanged();
     }

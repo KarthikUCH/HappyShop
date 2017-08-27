@@ -1,27 +1,16 @@
 package com.shop.happy.happyshop.data;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
-import android.support.annotation.WorkerThread;
-import android.util.Log;
 
-import com.shop.happy.happyshop.data.DbConstants.ProductsTable;
-import com.shop.happy.happyshop.data.DbConstants.Tables;
 import com.shop.happy.happyshop.network.HappyShopService;
-import com.shop.happy.happyshop.network.ResponseListener;
 import com.shop.happy.happyshop.network.RestServiceFactory;
 import com.shop.happy.happyshop.network.model.ProductDetailResponse;
 import com.shop.happy.happyshop.network.model.ProductItem;
 
-import java.util.ArrayList;
-
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by karthikeyan on 22/8/17.
@@ -37,7 +26,9 @@ public class ProductManager {
     private Observer mObserver;
 
     public interface Observer {
-        void onProductsLoaded(ArrayList<ProductItem> productList);
+        void onProductLoaded(ProductItem product);
+
+        void onError(String errorMsg);
     }
 
     public ProductManager(Context mContext, SQLiteDatabase mDbHelper, RestServiceFactory mRestServiceFactory) {
@@ -46,136 +37,34 @@ public class ProductManager {
         this.mRestServiceFactory = mRestServiceFactory;
     }
 
-    public void attach(Observer observer, String category) {
+    public void attach(int productId, Observer observer) {
         this.mObserver = observer;
-        displayProducts(category);
+        loadProductDetails(productId);
     }
 
     public void detach() {
         mObserver = null;
     }
 
-    /**
-     * To list the product based on @param category
-     *
-     * @param category The chosen category for which products need to be listed
-     */
-    private void displayProducts(String category) {
-        Observable.defer(() -> Observable.just(getProducts(category)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(products -> {
-                    Log.i(TAG, "OnNext");
-                    if (mObserver != null) {
-                        mObserver.onProductsLoaded(products);
-                    }
-                }, throwable -> {
-                    Log.e(TAG, "onError", throwable);
-                }, () -> {
-                    Log.i(TAG, "onCompleted");
-                });
+    private void loadProductDetails(int productId){
+        HappyShopService service = mRestServiceFactory.create(HappyShopService.class);
+        Call<ProductDetailResponse> responseCall = service.getProductDetail(String.valueOf(productId));
+        responseCall.enqueue(productDetailResponseCallback);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     DATABASE CALL                                          //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * To get product list from {@link Tables#PRODUCTS}
-     *
-     * @param category The chosen category for which products need to be retrieved
-     * @return product list
-     */
-    @WorkerThread
-    private ArrayList<ProductItem> getProducts(String category) {
-        ArrayList<ProductItem> items = new ArrayList<>();
-
-        String selection = ProductsTable.COLUMN_PRODUCT_CATEGORY + " =?";
-        String[] selectionArgs = new String[]{category};
-
-        Cursor cursor = mDbHelper.query(Tables.PRODUCTS, null, selection, selectionArgs
-                , null, null, ProductsTable.COLUMN_PRODUCT_NAME + " ASC");
-
-        while (cursor.moveToNext()) {
-            items.add(CursorUtil.getProduct(cursor));
-        }
-        if (cursor != null) {
-            cursor.close();
-        }
-        return items;
-    }
-
-    /**
-     * TO parse and insert the product details into {@link Tables#PRODUCTS}
-     *
-     * @param product Product detail response
-     */
-    @WorkerThread
-    public void parseProductDetail(ProductItem product) {
-
-        mDbHelper.beginTransaction();
-
-        SQLiteStatement insert = mDbHelper.compileStatement(DbConstants.INSERT_PRODUCT_QUERY);
-
-        insert.bindDouble(1, product.getId());
-        insert.bindString(2, product.getName());
-        insert.bindString(3, product.getPrice());
-        insert.bindString(4, product.getImgURL());
-        insert.bindString(5, product.getCategory());
-        insert.bindString(6, product.getDescription());
-        insert.bindDouble(7, product.isUnderSale() ? 1 : 0);
-        insert.execute();
-
-        mDbHelper.setTransactionSuccessful();
-        mDbHelper.endTransaction();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     NETWORK CALL                                           //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Background task to execute {@link #retrieveProductDetail(int)}
-     *
-     * @param productId       unique id of product
-     * @param productListener listener to update the UI
-     */
-    public void fetchProductDetail(int productId, ResponseListener<ProductItem> productListener) {
-
-        Observable.defer(() -> Observable.just(retrieveProductDetail(productId)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    Log.i(TAG, "onNext");
-                    productListener.onResponse(result);
-                }, throwable -> {
-                    Log.e(TAG, "onError", throwable);
-                }, () -> {
-                    Log.i(TAG, "onCompleted");
-                });
-    }
-
-    /**
-     * To perform http service to fetch products from server
-     *
-     * @param productId unique id of product
-     * @return
-     */
-    @WorkerThread
-    private ProductItem retrieveProductDetail(int productId) {
-        try {
-            HappyShopService service = mRestServiceFactory.create(HappyShopService.class);
-            Call<ProductDetailResponse> responseCall = service.getProductDetail(String.valueOf(productId));
-            Response<ProductDetailResponse> response = responseCall.execute();
-            if (response.code() == 200) {
-                ProductItem item = response.body().getProduct();
-                parseProductDetail(item);
-                return item;
+    private Callback<ProductDetailResponse> productDetailResponseCallback = new Callback<ProductDetailResponse>() {
+        @Override
+        public void onResponse(Call<ProductDetailResponse> call, Response<ProductDetailResponse> response) {
+            if(mObserver!= null){
+                mObserver.onProductLoaded(response.body().getProduct());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
 
-    }
+        @Override
+        public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
+            if(mObserver!= null){
+
+            }
+        }
+    };
 }

@@ -118,9 +118,6 @@ public class ProductItem implements Parcelable {
         dest.writeString(this.description);
         dest.writeString(this.imgURL);
         dest.writeByte((byte) (this.isUnderSale ? 1 : 0));
-
-        /*dest.writeStringArray(new String[]{String.valueOf(this.id), this.name, this.price,
-                this.category, this.description, this.imgURL, String.valueOf(this.isUnderSale)});*/
     }
 
     private ProductItem(Parcel in) {

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
+import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
 import com.shop.happy.happyshop.ui.fragment.CartFragment;
 import com.shop.happy.happyshop.ui.fragment.ProductListFragment;
@@ -18,7 +19,7 @@ import butterknife.ButterKnife;
 public class ProductListActivity extends InjectableActivity implements ProductListFragment.ProductClickListener {
 
     public static final String ARG_EXTRA_BOOLEAN_DISPLAY_CART = "extra_arg_display_cart";
-    public static final String ARG_EXTRA_STRING_CATEGORY = "extra_arg_category";
+    public static final String ARG_EXTRA_PARCELABLE_CATEGORY = "extra_arg_category";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -59,8 +60,8 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
     }
 
     private void showProductFragment() {
-        String category = getIntent().getStringExtra(ARG_EXTRA_STRING_CATEGORY);
-        getSupportActionBar().setTitle(category);
+        CategoryItem category = getIntent().getParcelableExtra(ARG_EXTRA_PARCELABLE_CATEGORY);
+        getSupportActionBar().setTitle(category.getName());
 
         mProductListFragment = ProductListFragment.newInstance(category);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

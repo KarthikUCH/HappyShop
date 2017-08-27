@@ -7,9 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.HappyShop;
-import com.shop.happy.happyshop.data.CategoryManager;
 import com.shop.happy.happyshop.data.ProductManager;
 import com.shop.happy.happyshop.data.ShoppingCartManager;
+import com.shop.happy.happyshop.data.CategoryManager;
+import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
  */
 
 public abstract class InjectableActivity extends AppCompatActivity {
+
 
     @Inject
     CategoryManager mCategoryManager;
@@ -38,17 +40,17 @@ public abstract class InjectableActivity extends AppCompatActivity {
 
     abstract void injectComponent(ApplicationComponent component);
 
-    protected void startProductListActivity(boolean isDisplayCart, String category) {
+    protected void startProductListActivity(boolean isDisplayCart, CategoryItem category) {
         Intent intent = new Intent(this, ProductListActivity.class);
         intent.putExtra(ProductListActivity.ARG_EXTRA_BOOLEAN_DISPLAY_CART, isDisplayCart);
-        intent.putExtra(ProductListActivity.ARG_EXTRA_STRING_CATEGORY, category);
+        intent.putExtra(ProductListActivity.ARG_EXTRA_PARCELABLE_CATEGORY, category);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
     protected void startProductDetailActivity(ProductItem item) {
         Intent intent = new Intent(this, ProductDetailActivity.class);
-        intent.putExtra(ProductDetailActivity.ARG_EXTRA_STRING_PRODUCT_ITEM, item);
+        intent.putExtra(ProductDetailActivity.ARG_EXTRA_PARCELABLE_PRODUCT_ITEM, item);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

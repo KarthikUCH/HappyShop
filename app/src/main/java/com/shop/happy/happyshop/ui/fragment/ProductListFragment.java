@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
-import com.shop.happy.happyshop.data.ProductManager;
+import com.shop.happy.happyshop.data.ProductListManager;
+import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
 import com.shop.happy.happyshop.ui.ProductListActivity;
 import com.shop.happy.happyshop.ui.adapter.ProductListAdapter;
@@ -30,16 +31,17 @@ import butterknife.ButterKnife;
  * Use the {@link ProductListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductListFragment extends BaseFragment implements ProductManager.Observer {
+public class ProductListFragment extends BaseFragment implements ProductListManager.Observer {
 
     private static final int RECYCLER_VIEW_SPAN_COUNT = 2;
     @BindView(R.id.recycler_view_product)
     RecyclerView mRecyclerView;
 
-    private String mCategory;
+    private CategoryItem mCategory;
 
     private ProductListAdapter mAdapter;
     private ProductClickListener mListener;
+    private GridLayoutManager mGridLayoutManager;
 
     public ProductListFragment() {
         // Required empty public constructor
@@ -52,10 +54,10 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
      * @param category .
      * @return A new instance of fragment ProductListFragment.
      */
-    public static ProductListFragment newInstance(String category) {
+    public static ProductListFragment newInstance(CategoryItem category) {
         ProductListFragment fragment = new ProductListFragment();
         Bundle args = new Bundle();
-        args.putString(ProductListActivity.ARG_EXTRA_STRING_CATEGORY, category);
+        args.putParcelable(ProductListActivity.ARG_EXTRA_PARCELABLE_CATEGORY, category);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +66,7 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mCategory = getArguments().getString(ProductListActivity.ARG_EXTRA_STRING_CATEGORY);
+            mCategory = getArguments().getParcelable(ProductListActivity.ARG_EXTRA_PARCELABLE_CATEGORY);
         }
     }
 
@@ -102,15 +104,17 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
     @Override
     public void onDetach() {
         super.onDetach();
-        mProductManager.detach();
+        mProductListManager.detach();
         mListener = null;
     }
 
     private void showProducts() {
-        mProductManager.attach(this, mCategory);
+        mProductListManager.attach(this, mCategory.getName());
+        mGridLayoutManager = new GridLayoutManager(getContext(), RECYCLER_VIEW_SPAN_COUNT);
         mAdapter = new ProductListAdapter(getContext(), new ArrayList<>(), mListener);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), RECYCLER_VIEW_SPAN_COUNT));
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,9 +135,38 @@ public class ProductListFragment extends BaseFragment implements ProductManager.
         void onProductClick(ProductItem item);
     }
 
+
     @Override
-    public void onProductsLoaded(ArrayList<ProductItem> productList) {
-        mAdapter.swapData(productList);
+    public void onProductsLoaded(ArrayList<ProductItem> productList, int pageLoaded) {
+        if (pageLoaded == 1) {
+            mAdapter.swapData(productList);
+        } else {
+            mAdapter.addData(productList);
+        }
     }
 
+    @Override
+    public void onError(String errorMsg) {
+
+    }
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            int visibleItemCount = mGridLayoutManager.getChildCount();
+            int totalItemCount = mGridLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mGridLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition >= 0 && totalItemCount < mCategory.getProductCount()
+                    &&(visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                mProductListManager.loadMoreItems();
+            }
+        }
+    };
 }

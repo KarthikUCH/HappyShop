@@ -70,6 +70,11 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         notifyDataSetChanged();
     }
 
+    public void addData(ArrayList<ProductItem> productList) {
+        this.mProducts.addAll(productList);
+        notifyDataSetChanged();
+    }
+
     class ProductViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.img_preview)

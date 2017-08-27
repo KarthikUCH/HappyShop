@@ -44,14 +44,12 @@ public class DbManager {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DbConstants.SQL_CREATE_PRODUCTS_TABLE);
             db.execSQL(DbConstants.SQL_CREATE_SHOPPING_CART_TABLE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            db.execSQL(DbConstants.SQL_DROP_PRODUCTS_TABLE);
             db.execSQL(DbConstants.SQL_DROP_SHOPPING_CART_TABLE);
         }
     }

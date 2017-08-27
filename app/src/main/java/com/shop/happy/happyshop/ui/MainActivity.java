@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
+import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.data.CategoryManager;
 import com.shop.happy.happyshop.ui.adapter.CategoryAdapter;
 
@@ -70,7 +71,7 @@ public class MainActivity extends InjectableActivity
     @Override
     protected void onStart() {
         super.onStart();
-        mCategoryManager.attach(this);
+        attach();
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
@@ -109,7 +110,7 @@ public class MainActivity extends InjectableActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_cart) {
-            startProductListActivity(true, "");
+            startProductListActivity(true, null);
             return true;
         }
 
@@ -125,7 +126,7 @@ public class MainActivity extends InjectableActivity
         if (id == R.id.nav_category) {
             // Handle the camera action
         } else if (id == R.id.nav_shopping_cart) {
-            startProductListActivity(true, "");
+            startProductListActivity(true, null);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -137,6 +138,13 @@ public class MainActivity extends InjectableActivity
         mAdapter = new CategoryAdapter(new ArrayList<>(), itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void attach() {
+        if (mAdapter.getItemCount() == 0) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        mCategoryManager.attach(this);
     }
 
     private void refreshBadgeCount(Menu menu) {
@@ -151,17 +159,29 @@ public class MainActivity extends InjectableActivity
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
+    public void onCategoriesLoaded(ArrayList<CategoryItem> categoryLst) {
+        progressBar.setVisibility(View.GONE);
+        mAdapter.swapDate(categoryLst);
+    }
+
+    @Override
+    public void onError(String errorMsg) {
+
+    }
+
+
+
+    /*@Override
     public void onCategoriesLoaded(ArrayList<String> categoryLst) {
         if (categoryLst.size() == 0) {
             progressBar.setVisibility(View.VISIBLE);
         } else {
-            progressBar.setVisibility(View.GONE);
+
         }
-        mAdapter.swapDate(categoryLst);
-    }
+    }*/
 
     private final CategoryAdapter.CategoryClickListener itemClickListener = category -> {
-        Log.d("clicked category", category);
+        Log.d("clicked category", category.getName());
         startProductListActivity(false, category);
     };
 }

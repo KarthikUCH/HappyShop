@@ -12,13 +12,13 @@ public interface RestServiceFactory {
 
     String BASE_URL = "http://sephora-mobile-takehome-apple.herokuapp.com/api/v1/";
 
-    <T> T create(Class<T> clazz) throws Exception;
+    <T> T create(Class<T> clazz);
 
     class Impl implements RestServiceFactory {
 
 
         @Override
-        public <T> T create(Class<T> clazz) throws Exception {
+        public <T> T create(Class<T> clazz){
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
             Retrofit.Builder builder = new Retrofit.Builder()

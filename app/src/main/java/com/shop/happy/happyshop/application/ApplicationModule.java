@@ -3,11 +3,12 @@ package com.shop.happy.happyshop.application;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.shop.happy.happyshop.data.CategoryManager;
 import com.shop.happy.happyshop.data.DbManager;
+import com.shop.happy.happyshop.data.ProductListManager;
 import com.shop.happy.happyshop.data.ProductManager;
 import com.shop.happy.happyshop.data.ShoppingCartManager;
 import com.shop.happy.happyshop.network.RestServiceFactory;
+import com.shop.happy.happyshop.data.CategoryManager;
 
 import javax.inject.Singleton;
 
@@ -41,7 +42,13 @@ public class ApplicationModule {
     @Singleton
     @Provides
     CategoryManager providesCategoryManager(SQLiteDatabase sqLiteDatabase, RestServiceFactory restServiceFactory) {
-        return new CategoryManager(mApp, sqLiteDatabase, restServiceFactory);
+        return new CategoryManager(mApp, restServiceFactory);
+    }
+
+    @Singleton
+    @Provides
+    ProductListManager providesProductListManager(SQLiteDatabase sqLiteDatabase, RestServiceFactory restServiceFactory) {
+        return new ProductListManager(mApp, restServiceFactory);
     }
 
     @Singleton
