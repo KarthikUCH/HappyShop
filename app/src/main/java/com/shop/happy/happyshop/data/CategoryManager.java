@@ -28,7 +28,7 @@ public class CategoryManager {
     public interface Observer {
         void onCategoriesLoaded(ArrayList<CategoryItem> categoryLst);
 
-        void onError(String errorMsg);
+        void onError(String errorMsg, Throwable t);
     }
 
     public CategoryManager(Context mContext, RestServiceFactory mRestServiceFactory) {
@@ -38,6 +38,10 @@ public class CategoryManager {
 
     public void attach(Observer observer) {
         this.mObserver = observer;
+        loadCategories();
+    }
+
+    public void refresh() {
         loadCategories();
     }
 
@@ -57,16 +61,20 @@ public class CategoryManager {
     private Callback<CategoryListResponse> categoryResponseCallback = new Callback<CategoryListResponse>() {
         @Override
         public void onResponse(Call<CategoryListResponse> call, Response<CategoryListResponse> response) {
-            if(mObserver!= null){
-                mObserver.onCategoriesLoaded(response.body().getCategoryList());
+            if (mObserver != null) {
+                if (response.code() == 200) {
+                    mObserver.onCategoriesLoaded(response.body().getCategoryList());
+                } else {
+                    mObserver.onError(response.message(), null);
+                }
             }
 
         }
 
         @Override
         public void onFailure(Call<CategoryListResponse> call, Throwable t) {
-            if(mObserver!= null){
-
+            if (mObserver != null) {
+                mObserver.onError("", t);
             }
         }
     };

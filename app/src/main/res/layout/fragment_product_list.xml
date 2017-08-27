@@ -4,11 +4,28 @@
     android:layout_height="match_parent"
     tools:context="com.shop.happy.happyshop.ui.fragment.ProductListFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_product"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/lay_no_network"
+                layout="@layout/item_no_network"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_product"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

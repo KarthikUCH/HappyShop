@@ -19,6 +19,9 @@
     <string name="text_product_description">Description</string>
     <string name="text_product_added_to_cart">Item added to Cart</string>
 
+    <!-- NETWORK ERROR -->
+    <string name="text_alert_no_network">You are not connected to internet. Please enable mobile data or wifi</string>
+    <string name="text_try_again">Click to try again</string>
     <!-- BUTTON -->
     <string name="text_btn_add_to_cart">Add To Cart</string>
 

@@ -4,11 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
@@ -17,6 +19,7 @@ import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.network.model.ProductItem;
 import com.shop.happy.happyshop.ui.ProductListActivity;
 import com.shop.happy.happyshop.ui.adapter.ProductListAdapter;
+import com.shop.happy.happyshop.util.NetworkUtility;
 
 import java.util.ArrayList;
 
@@ -34,10 +37,18 @@ import butterknife.ButterKnife;
 public class ProductListFragment extends BaseFragment implements ProductListManager.Observer {
 
     private static final int RECYCLER_VIEW_SPAN_COUNT = 2;
+
+    @BindView(R.id.swiperefresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     @BindView(R.id.recycler_view_product)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.lay_no_network)
+    LinearLayout layNetworkError;
+
     private CategoryItem mCategory;
+    private boolean mIsRefresh = false;
 
     private ProductListAdapter mAdapter;
     private ProductClickListener mListener;
@@ -81,6 +92,10 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mIsRefresh = true;
+            mProductListManager.refresh();
+        });
         showProducts();
     }
 
@@ -109,6 +124,7 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
     }
 
     private void showProducts() {
+        mSwipeRefreshLayout.setRefreshing(true);
         mProductListManager.attach(this, mCategory.getName());
         mGridLayoutManager = new GridLayoutManager(getContext(), RECYCLER_VIEW_SPAN_COUNT);
         mAdapter = new ProductListAdapter(getContext(), new ArrayList<>(), mListener);
@@ -138,7 +154,10 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
 
     @Override
     public void onProductsLoaded(ArrayList<ProductItem> productList, int pageLoaded) {
-        if (pageLoaded == 1) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        layNetworkError.setVisibility(View.GONE);
+        if (pageLoaded == 1 || mIsRefresh) {
+            mIsRefresh = false;
             mAdapter.swapData(productList);
         } else {
             mAdapter.addData(productList);
@@ -146,8 +165,14 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
     }
 
     @Override
-    public void onError(String errorMsg) {
-
+    public void onError(String errorMsg, Throwable t) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        mIsRefresh = false;
+        if (t != null && NetworkUtility.isKnownException(t)) {
+            if (!NetworkUtility.isNetworkAvailable(getContext()) && mAdapter.getItemCount() == 0) {
+                layNetworkError.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -164,7 +189,7 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
             int totalItemCount = mGridLayoutManager.getItemCount();
             int firstVisibleItemPosition = mGridLayoutManager.findFirstVisibleItemPosition();
             if (firstVisibleItemPosition >= 0 && totalItemCount < mCategory.getProductCount()
-                    &&(visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                 mProductListManager.loadMoreItems();
             }
         }

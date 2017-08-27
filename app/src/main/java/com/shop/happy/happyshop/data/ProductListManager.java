@@ -32,7 +32,7 @@ public class ProductListManager {
     public interface Observer {
         void onProductsLoaded(ArrayList<ProductItem> productList, int pageLoaded);
 
-        void onError(String errorMsg);
+        void onError(String errorMsg, Throwable t);
     }
 
     public ProductListManager(Context mContext, RestServiceFactory mRestServiceFactory) {
@@ -42,13 +42,19 @@ public class ProductListManager {
 
     public void attach(Observer observer, String category) {
         this.mObserver = observer;
-        this.mCategory= category;
-        loadProducts(category);
+        this.mCategory = category;
+        loadProducts();
     }
 
-    public void loadMoreItems(){
-        if(!isLoading){
-            loadProducts(mCategory);
+    public void refresh() {
+        isLoading = false;
+        loadPage = 0;
+        loadProducts();
+    }
+
+    public void loadMoreItems() {
+        if (!isLoading) {
+            loadProducts();
         }
     }
 
@@ -57,16 +63,16 @@ public class ProductListManager {
         reset();
     }
 
-    private void reset(){
+    private void reset() {
         isLoading = false;
         loadPage = 0;
     }
 
-    private void loadProducts(String category){
+    private void loadProducts() {
         isLoading = true;
-        loadPage ++;
+        loadPage++;
         HappyShopService service = mRestServiceFactory.create(HappyShopService.class);
-        Call<ProductListResponse> responseCall = service.getProductList(category, loadPage);
+        Call<ProductListResponse> responseCall = service.getProductList(mCategory, loadPage);
         responseCall.enqueue(produceListResponseCallback);
     }
 
@@ -74,17 +80,19 @@ public class ProductListManager {
         @Override
         public void onResponse(Call<ProductListResponse> call, Response<ProductListResponse> response) {
             isLoading = false;
-            if(mObserver!= null){
+            if (mObserver != null) {
                 mObserver.onProductsLoaded(response.body().getProductList(), loadPage);
+            } else {
+                mObserver.onError(response.message(), null);
             }
         }
 
         @Override
         public void onFailure(Call<ProductListResponse> call, Throwable t) {
             isLoading = false;
-            loadPage --;
-            if(mObserver!= null){
-
+            loadPage--;
+            if (mObserver != null) {
+                mObserver.onError("", t);
             }
         }
     };

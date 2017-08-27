@@ -2,6 +2,7 @@ package com.shop.happy.happyshop.ui;
 
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
@@ -13,18 +14,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.shop.happy.happyshop.R;
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.network.model.CategoryItem;
 import com.shop.happy.happyshop.data.CategoryManager;
 import com.shop.happy.happyshop.ui.adapter.CategoryAdapter;
+import com.shop.happy.happyshop.util.NetworkUtility;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends InjectableActivity
         implements NavigationView.OnNavigationItemSelectedListener, CategoryManager.Observer {
@@ -41,8 +46,11 @@ public class MainActivity extends InjectableActivity
     @BindView(R.id.recycler_view_category)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
+    @BindView(R.id.swiperefresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.lay_no_network)
+    LinearLayout layNetworkError;
 
     private CategoryAdapter mAdapter;
 
@@ -60,6 +68,9 @@ public class MainActivity extends InjectableActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mCategoryManager.refresh();
+        });
         showCategory();
     }
 
@@ -142,7 +153,7 @@ public class MainActivity extends InjectableActivity
 
     private void attach() {
         if (mAdapter.getItemCount() == 0) {
-            progressBar.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(true);
         }
         mCategoryManager.attach(this);
     }
@@ -160,25 +171,21 @@ public class MainActivity extends InjectableActivity
 
     @Override
     public void onCategoriesLoaded(ArrayList<CategoryItem> categoryLst) {
-        progressBar.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(false);
+        layNetworkError.setVisibility(View.GONE);
         mAdapter.swapDate(categoryLst);
     }
 
     @Override
-    public void onError(String errorMsg) {
+    public void onError(String errorMsg, Throwable t) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (t != null && NetworkUtility.isKnownException(t)) {
+            if (!NetworkUtility.isNetworkAvailable(getApplicationContext())) {
+                layNetworkError.setVisibility(View.VISIBLE);
+            }
+        }
 
     }
-
-
-
-    /*@Override
-    public void onCategoriesLoaded(ArrayList<String> categoryLst) {
-        if (categoryLst.size() == 0) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-
-        }
-    }*/
 
     private final CategoryAdapter.CategoryClickListener itemClickListener = category -> {
         Log.d("clicked category", category.getName());
