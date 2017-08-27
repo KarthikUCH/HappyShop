@@ -55,6 +55,11 @@ public class ProductManager {
         mObserver = null;
     }
 
+    /**
+     * To list the product based on @param category
+     *
+     * @param category The chosen category for which products need to be listed
+     */
     private void displayProducts(String category) {
         Observable.defer(() -> Observable.just(getProducts(category)))
                 .subscribeOn(Schedulers.io())
@@ -75,7 +80,12 @@ public class ProductManager {
     //                                     DATABASE CALL                                          //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    /**
+     * To get product list from {@link Tables#PRODUCTS}
+     *
+     * @param category The chosen category for which products need to be retrieved
+     * @return product list
+     */
     @WorkerThread
     private ArrayList<ProductItem> getProducts(String category) {
         ArrayList<ProductItem> items = new ArrayList<>();
@@ -95,6 +105,11 @@ public class ProductManager {
         return items;
     }
 
+    /**
+     * TO parse and insert the product details into {@link Tables#PRODUCTS}
+     *
+     * @param product Product detail response
+     */
     @WorkerThread
     public void parseProductDetail(ProductItem product) {
 
@@ -119,15 +134,20 @@ public class ProductManager {
     //                                     NETWORK CALL                                           //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    public void fetchProductDetail(int productId, ResponseListener<ProductItem> product) {
+    /**
+     * Background task to execute {@link #retrieveProductDetail(int)}
+     *
+     * @param productId       unique id of product
+     * @param productListener listener to update the UI
+     */
+    public void fetchProductDetail(int productId, ResponseListener<ProductItem> productListener) {
 
         Observable.defer(() -> Observable.just(retrieveProductDetail(productId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     Log.i(TAG, "onNext");
-                    product.onResponse(result);
+                    productListener.onResponse(result);
                 }, throwable -> {
                     Log.e(TAG, "onError", throwable);
                 }, () -> {
@@ -135,6 +155,12 @@ public class ProductManager {
                 });
     }
 
+    /**
+     * To perform http service to fetch products from server
+     *
+     * @param productId unique id of product
+     * @return
+     */
     @WorkerThread
     private ProductItem retrieveProductDetail(int productId) {
         try {

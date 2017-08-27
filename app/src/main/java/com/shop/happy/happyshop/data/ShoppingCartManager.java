@@ -57,6 +57,9 @@ public class ShoppingCartManager {
         this.mObserver = null;
     }
 
+    /**
+     * To list the product added to the cart
+     */
     private void displayCartProducts() {
         Observable.defer(() -> Observable.just(getProductsFromCart()))
                 .subscribeOn(Schedulers.io())
@@ -73,10 +76,16 @@ public class ShoppingCartManager {
                 });
     }
 
+    /**
+     * @return the number of item added to the cart
+     */
     public int getCount() {
         return totalItemInCart;
     }
 
+    /**
+     * To calculate the number of item added to the cart
+     */
     public void calculateTotalItemsInCart() {
 
         Observable.defer(() -> Observable.just(getTotalItemsInCart()))
@@ -93,6 +102,13 @@ public class ShoppingCartManager {
 
     }
 
+    /**
+     * To update products to the cart
+     *
+     * @param product {@link ProductItem} to be updated
+     * @param quantity number of item to be added/removed
+     * @param listener
+     */
     public void updateToShoppingCart(ProductItem product, int quantity, ResponseListener<Integer> listener) {
 
         Observable.defer(() -> Observable.just(getProductQuantityInCart(product.getId())))
@@ -121,6 +137,11 @@ public class ShoppingCartManager {
 
     }
 
+    /**
+     * To delete the product from the cart
+     * @param product {@link ProductItem} to be removed
+     * @param listener
+     */
     public void removeProductFromCart(CartProductItem product, ResponseListener<CartProductItem> listener) {
         Observable.defer(() -> Observable.just(removeProduct(product.getId())))
                 .map(integer -> {
@@ -144,6 +165,11 @@ public class ShoppingCartManager {
                 });
     }
 
+    /**
+     * To get the product quantity added to the cart
+     * @param product {@link ProductItem}
+     * @param listener
+     */
     public void getProductQuantity(ProductItem product, ResponseListener<Integer> listener) {
         Observable.defer(() -> Observable.just(getProductQuantityInCart(product.getId())))
                 .subscribeOn(Schedulers.io())
@@ -158,6 +184,11 @@ public class ShoppingCartManager {
                 });
     }
 
+    /**
+     * To update the badge count in action bar
+     * @param context
+     * @param icon
+     */
     public void setBadgeCount(Context context, LayerDrawable icon) {
 
         BadgeDrawable badge;
@@ -180,6 +211,11 @@ public class ShoppingCartManager {
     //                                     DATABASE CALL                                          //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * To get the product quantity added to the cart
+     * @param productId unique Id of a product
+     * @return
+     */
     @WorkerThread
     private int getProductQuantityInCart(int productId) {
         int quantity = 0;
@@ -198,6 +234,12 @@ public class ShoppingCartManager {
         return quantity;
     }
 
+    /**
+     * To insert {@link ProductItem} to cart
+     * @param product
+     * @param quantity number of item to be added
+     * @return
+     */
     @WorkerThread
     private long insertProduct(ProductItem product, int quantity) {
         ContentValues values = new ContentValues();
@@ -210,6 +252,12 @@ public class ShoppingCartManager {
         return mDbHelper.insert(Tables.SHOPPING_CART, null, values);
     }
 
+    /**
+     * To delete {@link ProductItem} from cart
+     * @param productId unique id of product
+     * @return
+     */
+    @WorkerThread
     private int removeProduct(int productId) {
         String where = ShoppingCartTable.COLUMN_CART_PRODUCT_ID + " =? ";
         String[] whereArgs = new String[]{String.valueOf(productId)};
@@ -217,6 +265,9 @@ public class ShoppingCartManager {
         return mDbHelper.delete(Tables.SHOPPING_CART, where, whereArgs);
     }
 
+    /**
+     * @return total number of item in cart
+     */
     @WorkerThread
     private int getTotalItemsInCart() {
         int quantity = 0;
@@ -231,6 +282,10 @@ public class ShoppingCartManager {
         return quantity;
     }
 
+    /**
+     * To fetch the list of products from cart
+     * @return {@link CartProductItem} list
+     */
     @WorkerThread
     private ArrayList<CartProductItem> getProductsFromCart() {
         ArrayList<CartProductItem> items = new ArrayList<>();

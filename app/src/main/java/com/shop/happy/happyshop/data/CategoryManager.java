@@ -54,11 +54,11 @@ public class CategoryManager {
         mObserver = null;
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                     DATABASE CALL                                          //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * To list the categories
+     *
+     * @param refreshProduct fetch products for server if true
+     */
     private void displayCategories(boolean refreshProduct) {
         Observable.defer(() -> Observable.just(getCategories()))
                 .subscribeOn(Schedulers.io())
@@ -78,6 +78,15 @@ public class CategoryManager {
                 });
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                     DATABASE CALL                                          //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * To get the category list form {@link Tables#PRODUCTS}
+     *
+     * @return category list
+     */
     @WorkerThread
     private ArrayList<String> getCategories() {
         ArrayList<String> categoryLst = new ArrayList<>();
@@ -96,6 +105,11 @@ public class CategoryManager {
     }
 
 
+    /**
+     * To parse and insert the products into {@link Tables#PRODUCTS}
+     *
+     * @param productListResponse Product list response
+     */
     public void parseProducts(ProductListResponse productListResponse) {
 
         mDbHelper.beginTransaction();
@@ -119,7 +133,9 @@ public class CategoryManager {
     //                                     NETWORK CALL                                           //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    /**
+     * Background task to execute {@link #retrieveProducts()}
+     */
     private void fetchProducts() {
 
         Observable.defer(() -> Observable.just(retrieveProducts()))
@@ -135,6 +151,11 @@ public class CategoryManager {
                 });
     }
 
+    /**
+     * To perform http service to fetch products from server
+     *
+     * @return
+     */
     @WorkerThread
     private boolean retrieveProducts() {
         try {
