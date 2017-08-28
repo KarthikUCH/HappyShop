@@ -1,0 +1,84 @@
+{
+  "products": [
+    {
+      "category": "Makeup",
+      "id": 26,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/9583/default_2890446cfff9f964de59276776e36052263c277f_1423036598_THEBALM_downboy.jpg",
+      "name": "DownBoy 9.9g",
+      "price": 2900.0,
+      "under_sale": true
+    },
+    {
+      "category": "Makeup",
+      "id": 24,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/1288/default_b47403760bab45c9dcb1506f829da7f0a8ae1664_JH_cheekie_jami.png",
+      "name": "Cheekie Cheek & Lip Shine Palette 4.3g",
+      "price": 3200.0,
+      "under_sale": true
+    },
+    {
+      "category": "Makeup",
+      "id": 20,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/6642/default_da326737a8b499d7e5bd98295ed4c55ba4614933_1410921469_ENV_Silk_20Touche_20Luxurious.jpg",
+      "name": "Silk Touch\u00e9 Luxurious Foundation SPF 15 11g",
+      "price": 6300.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 22,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/4509/default_dadd9518417af7c9f48ff060ee887030a71bbb29_faceatelier_new_lipglaze_cameo.jpg",
+      "name": "Lip Glaze 15ml",
+      "price": 4100.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 28,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/9274/default_92e59c0b6dfca1ddf7902258c2c38ef0dbddb750_1421252192_primer_300dpi.jpg",
+      "name": "TimeBalm Primer 30ml",
+      "price": 4000.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 49,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/11356/default_732c2fa9afe79a82799cd467a49db598ef94fe13_1435026285_Plum-Peppermint.jpg",
+      "name": "Plum & Peppermint Lip Balm 4.4ml",
+      "price": 700.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 53,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/11331/default_48ce5c1e6ab1d0a5cc32ae79240c6d60a5b81fd1_1434618208_Banana-Split.jpg",
+      "name": "Banana Split Lip Balm 4.4ml",
+      "price": 700.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 56,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/8341/default_f5c6654359e29460459010e90abce9b045ae2b63_1417488417_cover_20it_20up_grey.jpg",
+      "name": "Cover All Mix Kit",
+      "price": 6100.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 59,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/2240/default_7c0aab2318fd02a9caacaf2fce7c3bd7ce475848_alima-pure-Satin-Finishing-Powder.png",
+      "name": "Satin Finishing Powder 5g",
+      "price": 3400.0,
+      "under_sale": false
+    },
+    {
+      "category": "Makeup",
+      "id": 62,
+      "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/7048/default_8dd36565aa2a23fb1974ce5ed6de3521e1f49c33_1412071041_orange.jpg",
+      "name": "Spicy Orange Eyeliner 0.3g",
+      "price": 900.0,
+      "under_sale": true
+    }
+  ]
+}

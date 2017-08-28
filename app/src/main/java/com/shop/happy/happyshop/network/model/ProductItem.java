@@ -37,10 +37,11 @@ public class ProductItem implements Parcelable {
 
     }
 
-    public ProductItem(int id, String name, String category, String imgURL, String price, boolean isUnderSale) {
+    public ProductItem(int id, String name, String category, String description, String imgURL, String price, boolean isUnderSale) {
         this.id = id;
         this.name = name;
         this.category = category;
+        this.description = description;
         this.imgURL = imgURL;
         this.price = price;
         this.isUnderSale = isUnderSale;

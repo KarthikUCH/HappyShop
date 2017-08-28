@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.shop.happy.happyshop.application.ApplicationComponent;
 import com.shop.happy.happyshop.application.HappyShop;
@@ -40,11 +41,17 @@ public abstract class InjectableActivity extends AppCompatActivity {
 
     abstract void injectComponent(ApplicationComponent component);
 
-    protected void startProductListActivity(boolean isDisplayCart, CategoryItem category) {
+    protected void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    protected void startProductListActivity(boolean isDisplayCart, CategoryItem category, boolean clearTop) {
         Intent intent = new Intent(this, ProductListActivity.class);
         intent.putExtra(ProductListActivity.ARG_EXTRA_BOOLEAN_DISPLAY_CART, isDisplayCart);
         intent.putExtra(ProductListActivity.ARG_EXTRA_PARCELABLE_CATEGORY, category);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (clearTop) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
         startActivity(intent);
     }
 

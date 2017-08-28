@@ -53,8 +53,14 @@ public class ProductListActivity extends InjectableActivity implements ProductLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
             onBackPressed();
+            return true;
+        }
+        if (id == R.id.action_cart) {
+            startProductListActivity(true, null, false);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

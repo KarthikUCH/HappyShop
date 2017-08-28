@@ -1,0 +1,28 @@
+{
+  "categories": [
+    {
+      "name": "Makeup",
+      "products_count": 48
+    },
+    {
+      "name": "Tools",
+      "products_count": 20
+    },
+    {
+      "name": "Skincare",
+      "products_count": 58
+    },
+    {
+      "name": "Bath & Body",
+      "products_count": 56
+    },
+    {
+      "name": "Nails",
+      "products_count": 18
+    },
+    {
+      "name": "Men",
+      "products_count": 2
+    }
+  ]
+}

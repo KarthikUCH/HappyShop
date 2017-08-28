@@ -215,7 +215,7 @@ public class ShoppingCartManager {
      * @return
      */
     @WorkerThread
-    private int getProductQuantityInCart(int productId) {
+    public int getProductQuantityInCart(int productId) {
         int quantity = 0;
         String selection = ShoppingCartTable.COLUMN_CART_PRODUCT_ID + " =?";
         String[] selectionArgs = new String[]{String.valueOf(productId)};
@@ -239,7 +239,7 @@ public class ShoppingCartManager {
      * @return
      */
     @WorkerThread
-    private long insertProduct(ProductItem product, int quantity) {
+    public long insertProduct(ProductItem product, int quantity) {
         ContentValues values = new ContentValues();
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_ID, product.getId());
         values.put(ShoppingCartTable.COLUMN_CART_PRODUCT_NAME, product.getName());
@@ -258,7 +258,7 @@ public class ShoppingCartManager {
      * @return
      */
     @WorkerThread
-    private int removeProduct(int productId) {
+    public int removeProduct(int productId) {
         String where = ShoppingCartTable.COLUMN_CART_PRODUCT_ID + " =? ";
         String[] whereArgs = new String[]{String.valueOf(productId)};
 
@@ -269,7 +269,7 @@ public class ShoppingCartManager {
      * @return total number of item in cart
      */
     @WorkerThread
-    private int getTotalItemsInCart() {
+    public int getTotalItemsInCart() {
         int quantity = 0;
         String query = "SELECT SUM(" + ShoppingCartTable.COLUMN_CART_PRODUCT_QUANTITY + ") FROM " + Tables.SHOPPING_CART;
         Cursor cursor = mDbHelper.rawQuery(query, null);
@@ -287,7 +287,7 @@ public class ShoppingCartManager {
      * @return {@link CartProductItem} list
      */
     @WorkerThread
-    private ArrayList<CartProductItem> getProductsFromCart() {
+    public ArrayList<CartProductItem> getProductsFromCart() {
         ArrayList<CartProductItem> items = new ArrayList<>();
 
         Cursor cursor = mDbHelper.query(Tables.SHOPPING_CART, null, null , null, null, null,

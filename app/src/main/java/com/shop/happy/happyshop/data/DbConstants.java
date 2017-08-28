@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 
 public class DbConstants {
 
-    public static final String DB_NAME = "hackersnews.db";
+    public static final String DB_NAME = "happyshop.db";
     public static final int DB_VERSION = 1;
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";

@@ -21,7 +21,6 @@ public class ProductManager {
     private static final String TAG = ProductManager.class.getName();
 
     private final Context mContext;
-    private final SQLiteDatabase mDbHelper;
     private final RestServiceFactory mRestServiceFactory;
     private Observer mObserver;
 
@@ -31,9 +30,8 @@ public class ProductManager {
         void onError(String errorMsg);
     }
 
-    public ProductManager(Context mContext, SQLiteDatabase mDbHelper, RestServiceFactory mRestServiceFactory) {
+    public ProductManager(Context mContext, RestServiceFactory mRestServiceFactory) {
         this.mContext = mContext;
-        this.mDbHelper = mDbHelper;
         this.mRestServiceFactory = mRestServiceFactory;
     }
 
@@ -46,7 +44,7 @@ public class ProductManager {
         mObserver = null;
     }
 
-    private void loadProductDetails(int productId){
+    private void loadProductDetails(int productId) {
         HappyShopService service = mRestServiceFactory.create(HappyShopService.class);
         Call<ProductDetailResponse> responseCall = service.getProductDetail(String.valueOf(productId));
         responseCall.enqueue(productDetailResponseCallback);
@@ -55,14 +53,18 @@ public class ProductManager {
     private Callback<ProductDetailResponse> productDetailResponseCallback = new Callback<ProductDetailResponse>() {
         @Override
         public void onResponse(Call<ProductDetailResponse> call, Response<ProductDetailResponse> response) {
-            if(mObserver!= null){
-                mObserver.onProductLoaded(response.body().getProduct());
+            if (mObserver != null) {
+                if (response.code() == 200) {
+                    mObserver.onProductLoaded(response.body().getProduct());
+                } else {
+                    mObserver.onError(response.message());
+                }
             }
         }
 
         @Override
         public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
-            if(mObserver!= null){
+            if (mObserver != null) {
 
             }
         }

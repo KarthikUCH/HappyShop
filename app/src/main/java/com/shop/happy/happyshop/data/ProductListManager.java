@@ -81,9 +81,11 @@ public class ProductListManager {
         public void onResponse(Call<ProductListResponse> call, Response<ProductListResponse> response) {
             isLoading = false;
             if (mObserver != null) {
-                mObserver.onProductsLoaded(response.body().getProductList(), loadPage);
-            } else {
-                mObserver.onError(response.message(), null);
+                if (response.code() == 200) {
+                    mObserver.onProductsLoaded(response.body().getProductList(), loadPage);
+                } else {
+                    mObserver.onError(response.message(), null);
+                }
             }
         }
 

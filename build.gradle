@@ -40,4 +40,7 @@ ext {
     rxAndroidVersion = "1.2.1"
     junitVersion = "4.12"
     glideVersion = "4.0.0"
+    mockitoVersion = "2.1.0"
+    robolectricVersion = "3.3.2"
+    mockwebserverVersion = "3.8.0"
 }

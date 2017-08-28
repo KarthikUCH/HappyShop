@@ -1,0 +1,11 @@
+{
+  "product": {
+    "category": "Makeup",
+    "description": "Lorem ipsum dolor sit amet DownBoy 9.9g product description consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "id": 26,
+    "img_url": "http://luxola-assets-staging-nemesis.s3.amazonaws.com/images/pictures/9583/default_2890446cfff9f964de59276776e36052263c277f_1423036598_THEBALM_downboy.jpg",
+    "name": "DownBoy 9.9g",
+    "price": 2900.0,
+    "under_sale": true
+  }
+}

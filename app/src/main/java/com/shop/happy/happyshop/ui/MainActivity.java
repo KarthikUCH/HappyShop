@@ -121,7 +121,7 @@ public class MainActivity extends InjectableActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_cart) {
-            startProductListActivity(true, null);
+            startProductListActivity(true, null, true);
             return true;
         }
 
@@ -137,7 +137,9 @@ public class MainActivity extends InjectableActivity
         if (id == R.id.nav_category) {
             // Handle the camera action
         } else if (id == R.id.nav_shopping_cart) {
-            startProductListActivity(true, null);
+            startProductListActivity(true, null, true);
+        } else if (id == R.id.nav_settings) {
+            showToast(getResources().getString(R.string.action_settings));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -189,6 +191,6 @@ public class MainActivity extends InjectableActivity
 
     private final CategoryAdapter.CategoryClickListener itemClickListener = category -> {
         Log.d("clicked category", category.getName());
-        startProductListActivity(false, category);
+        startProductListActivity(false, category, true);
     };
 }

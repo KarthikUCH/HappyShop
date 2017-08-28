@@ -1,6 +1,7 @@
 package com.shop.happy.happyshop.ui.fragment;
 
 import android.content.Context;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -76,9 +80,23 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mCategory = getArguments().getParcelable(ProductListActivity.ARG_EXTRA_PARCELABLE_CATEGORY);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        refreshBadgeCount(menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -131,6 +149,12 @@ public class ProductListFragment extends BaseFragment implements ProductListMana
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+    }
+
+    private void refreshBadgeCount(Menu menu) {
+        MenuItem itemCart = menu.findItem(R.id.action_cart);
+        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
+        mShoppingCartManager.setBadgeCount(getContext(), icon);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

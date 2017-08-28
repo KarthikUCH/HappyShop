@@ -53,8 +53,8 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
-    ProductManager providesProductManager(SQLiteDatabase sqLiteDatabase, RestServiceFactory restServiceFactory) {
-        return new ProductManager(mApp, sqLiteDatabase, restServiceFactory);
+    ProductManager providesProductManager(RestServiceFactory restServiceFactory) {
+        return new ProductManager(mApp, restServiceFactory);
     }
 
     @Singleton
