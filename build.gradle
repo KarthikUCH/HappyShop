@@ -32,7 +32,7 @@ ext {
 
     // dependencies versions
     supportLibraryVersion = "25.3.1"
-    DaggerVersion = "2.7"
+    DaggerVersion = "2.11"
     RetrofitVersion = "2.3.0"
     okhttpVersion = "3.8.0"
     butterknifeVersion = "8.8.0"
